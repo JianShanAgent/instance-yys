@@ -1,0 +1,19 @@
+# 凭据和开发机的调试覆写
+config/secrets.yaml
+config/local/**
+!config/local/.gitkeep
+.env
+
+# 运行数据（知识库文件、对话记录……）
+data
+
+# 只放在本机的备忘：这台服务器的地址和登录方式、协作约定
+docs/私有备忘.md
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+uv.lock
+
+.DS_Store

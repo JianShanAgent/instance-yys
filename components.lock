@@ -1,0 +1,7 @@
+# 这个部署用哪几个仓库的哪个提交。`./release pin` 把旁边各个仓库现在的提交记进来；
+# 发布号是本仓库提交的短号，所以改完这个文件要提交了再 `./release push`。第一行必须是核心。
+#
+# 名字           开发机上的目录（相对本仓库）   提交
+core             ../agent-core                6e422c9f7d283da5e3d0aa489a928037148dae12
+site-huiji       ../site-huiji                e5c3e604ba49aa7e2609ee574e4706af2c7ed32f
+site-huiji-yys   ../site-huiji-yys            40add689f20a2ee7cef8e7264eb4f08093e367fc

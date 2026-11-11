@@ -1,0 +1,20 @@
+# 这个部署的开发环境：核心 + 用到的插件，都用旁边目录里的源码（可编辑安装）。
+# 它不是一个要发布的包；线上用哪个提交由 components.lock 决定。
+[project]
+name = "jianshanagent-instance-yys"
+version = "0"
+description = "JianShanAgent 的一个部署：阴阳师 wiki 的 QQ 机器人"
+requires-python = ">=3.12"
+dependencies = [
+  "jianshanagent",
+  "jianshanagent-site-huiji",
+  "jianshanagent-site-huiji-yys",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+jianshanagent = { path = "../agent-core", editable = true }
+jianshanagent-site-huiji = { path = "../site-huiji", editable = true }
+jianshanagent-site-huiji-yys = { path = "../site-huiji-yys", editable = true }

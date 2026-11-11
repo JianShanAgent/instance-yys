@@ -13,8 +13,7 @@
 
 ## 这个仓库是干什么的
 
-见山的代码分散在几个仓库里：[核心](https://github.com/JianShanAgent/agent-core)、[灰机平台的插件](https://github.com/JianShanAgent/site-huiji)、[阴阳师 wiki 的插件](https://github.com/JianShanAgent/site-huiji-yys)。
-它们都不知道自己要部署到哪、服务哪个 wiki。把它们拼成一个真的在 QQ 上回话的机器人，是这个仓库的事。
+见山的代码分散在几个仓库里：[核心](https://github.com/JianShanAgent/agent-core)、[灰机平台的插件](https://github.com/JianShanAgent/site-huiji)、[阴阳师 wiki 的插件](https://github.com/JianShanAgent/site-huiji-yys)。它们都不知道自己要部署到哪、服务哪个 wiki。把它们拼成一个真的在 QQ 上回话的机器人，是这个仓库的事。
 
 所以这里几乎没有代码，只有三样东西：
 
@@ -45,8 +44,7 @@ git commit -am "…"          # 发布号就是这个提交的短号
 ./release rollback          # 反悔
 ```
 
-只改了 `config/` 时不用 `pin`，提交了直接 `push`。发布到哪台服务器写在 [`release`](release) 的 `SSH_HOST` 里。
-回滚、备份恢复、知识库怎么更新，见核心的[部署与运维](https://github.com/JianShanAgent/agent-core/blob/main/docs/部署与运维.md)。
+只改了 `config/` 时不用 `pin`，提交了直接 `push`。发布到哪台服务器写在 [`release`](release) 的 `SSH_HOST` 里。回滚、备份恢复、知识库怎么更新，见核心的[部署与运维](https://github.com/JianShanAgent/agent-core/blob/main/docs/部署与运维.md)。
 
 ## 改配置
 

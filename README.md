@@ -2,73 +2,87 @@
 
 <h1 align="center">instance-yys</h1>
 
-<p align="center"><a href="https://github.com/JianShanAgent/agent-core">见山</a>在<a href="https://yys.huijiwiki.com">阴阳师 wiki</a> 的那一个部署。</p>
+<p align="center"><a href="https://github.com/JianShanAgent/agent-core">JianShanAgent（见山）</a>服务于<a href="https://yys.huijiwiki.com">灰机阴阳师 Wiki</a> 的线上生产部署实例。</p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/实例-阴阳师%20wiki-2f6b5a?style=flat-square&labelColor=1f3b34" alt="实例：阴阳师 wiki">
+  <img src="https://img.shields.io/badge/部署实例-阴阳师%20Wiki-2f6b5a?style=flat-square&labelColor=1f3b34" alt="部署实例：阴阳师 Wiki">
   <img src="https://img.shields.io/github/license/JianShanAgent/instance-yys?label=License&color=2f6b5a&style=flat-square&labelColor=1f3b34" alt="License">
 </p>
 
-<sub>A JianShanAgent deployment: the QQ bot serving the Onmyoji wiki. Documentation is in Chinese.</sub>
+<sub>Production deployment repository of JianShanAgent serving the Onmyoji Wiki (`yys.huijiwiki.com`).</sub>
 
-## 这个仓库是干什么的
+## 这个仓库是什么
 
-见山的代码分散在几个仓库里：[核心](https://github.com/JianShanAgent/agent-core)、[灰机平台的插件](https://github.com/JianShanAgent/site-huiji)、[阴阳师 wiki 的插件](https://github.com/JianShanAgent/site-huiji-yys)。它们都不知道自己要部署到哪、服务哪个 wiki。把它们拼成一个真的在 QQ 上回话的机器人，是这个仓库的事。
+见山采用“核心框架 + 站点插件 + 部署实例”分离的架构：
+- [`agent-core`](https://github.com/JianShanAgent/agent-core)：通用 MediaWiki QQ 机器人框架、Web 管理后台与部署工具；
+- [`site-huiji`](https://github.com/JianShanAgent/site-huiji)：灰机 Wiki 平台的 `Data:` 命名空间插件；
+- [`site-huiji-yys`](https://github.com/JianShanAgent/site-huiji-yys)：阴阳师 Wiki 的式神/御魂查询、公告剧情知识库与立绘图库插件。
 
-所以这里几乎没有代码，只有三样东西：
+本仓库（`instance-yys`）负责**把上面三个仓库组装成线上实际运行的阴阳师 QQ 机器人**。仓库里不包含业务代码，只存放三样东西：
+1. [`config/`](config)：阴阳师线上实例相对默认配置的差异项（目前只需一个 [`config/core.wiki.yaml`](config/core.wiki.yaml) 指明灰机接口地址并启用 `site: yys`）；
+2. [`components.lock`](components.lock)：锁定线上当前使用的 `agent-core`、`site-huiji`、`site-huiji-yys` 各自精确的 Git Commit；
+3. [`docs/运维备忘.md`](docs/运维备忘.md)：线上知识库规模、服务器目录约定与外部服务说明。
 
-| | |
-|---|---|
-| [`config/`](config) | 这个部署和默认值不一样的地方。现在只有一个文件：服务哪个 wiki、用哪个站点插件 |
-| [`components.lock`](components.lock) | 用哪几个仓库的哪个提交。线上跑的是什么，以它为准 |
-| [`docs/运维备忘.md`](docs/运维备忘.md) | 这个部署现在是什么样、用了哪些外面的服务、对 wiki 要守的规矩 |
+> **想给你自己的 Wiki 搭建机器人？**
+> 请不要直接复制本仓库，去使用开箱即用的实例模板 **[`template-instance`](https://github.com/JianShanAgent/template-instance)**（支持 Python `uv` 原生直跑与 `docker compose up -d` 一键部署）；本仓库可作为配置写法的真实参考。
 
-想给你自己的 wiki 部署一个，不用复制这个仓库，用模板 [`template-instance`](https://github.com/JianShanAgent/template-instance)；这里可以当一个填好了的例子看。
+## 本地开发联调
 
-## 怎么发布
-
-开发机上几个仓库并排放：
+开发机上将四个仓库并排放在同一个父目录下：
 
 ```text
 JianShanAgent/
-  agent-core/  site-huiji/  site-huiji-yys/  instance-yys/
+├── agent-core/
+├── site-huiji/
+├── site-huiji-yys/
+└── instance-yys/
 ```
 
-改完代码、各自提交之后，在这个目录里：
+在本仓库目录下即可直接用源码可编辑模式启动调试：
 
 ```bash
-./release pin               # 把旁边各个仓库现在的提交记进 components.lock
-git commit -am "…"          # 发布号就是这个提交的短号
-./release push              # 打包上传、构建镜像，不影响正在跑的服务
-./release activate <发布号>  # 切换；起不来会自动切回上一个
-./release rollback          # 反悔
+# 首次运行复制凭据模板并填入密钥（secrets.yaml 不入库）
+cp config/secrets.example.yaml config/secrets.yaml
+
+# 安装同级目录下的核心与两个站点插件源码
+uv sync
+
+# 不连接 QQ 网关在本地试跑（打开 http://127.0.0.1:18080 即可在网页后台对话调试，令牌见 data/admin/token）
+JIANSHANAGENT_DRY_RUN=1 uv run jianshanagent
+
+# 使用本地已拉取的缓存离线重跑知识库清洗切片（调规则时使用）
+uv run python -m jianshanagent.plugins.knowledge run --offline
 ```
 
-只改了 `config/` 时不用 `pin`，提交了直接 `push`。发布到哪台服务器写在 [`release`](release) 的 `SSH_HOST` 里。回滚、备份恢复、知识库怎么更新，见核心的[部署与运维](https://github.com/JianShanAgent/agent-core/blob/main/docs/部署与运维.md)。
+> **注意**：线上服务器运行 `qqbot` 期间，开发机本地启动请务必加上 `JIANSHANAGENT_DRY_RUN=1`，避免同一个 QQ 机器人两处同时在线导致一条消息被重复回复。
 
-## 改配置
+## 生产服务器发布与回滚
 
-这里只写和默认值不一样的地方——默认值在核心和各个插件的包里。要改哪份配置，就在 `config/` 下建一个和它同名的文件，只写要改的那几项：
-
-```yaml
-# config/plugin.chat.yaml
-entry_timeout_seconds: 45
-```
-
-凭据不入库：`cp config/secrets.example.yaml config/secrets.yaml` 后填写，用 `./release secrets` 传到服务器。
-
-## 在本机试
+服务器 SSH 主机名配置在 [`release`](release) 脚本的 `SSH_HOST` 中（完整运维手册见 [`agent-core` 部署与运维](https://github.com/JianShanAgent/agent-core/blob/main/docs/部署与运维.md)）：
 
 ```bash
-uv sync                                        # 核心和两个插件，用旁边目录里的源码
-JIANSHANAGENT_DRY_RUN=1 uv run jianshanagent     # 不连 QQ
-uv run python -m jianshanagent.plugins.knowledge run --offline   # 用本地缓存重跑知识库预处理
+# 1. 如果修改了旁边 agent-core / site-huiji / site-huiji-yys 的代码并已提交，先锁定最新 Commit：
+./release pin
+git commit -am "更新组件版本"
+
+# （如果只修改了本仓库的 config/，提交后无需 pin）
+
+# 2. 一键打包上传当前提交、构建镜像并切换上线（健康检查不过会自动切回上一版，无需手输发布号）：
+./release deploy
+
+# 3. 其他常用运维操作：
+./release rollback    # 一键回退到上一个可用版本
+./release secrets     # 更新服务器上的 shared/secrets.yaml 凭据
+./release list        # 查看服务器上的历史版本与切换记录
 ```
 
-同一个机器人不能两处同时在线，不然一条消息会被回复两次——线上的在跑时，本机一定要带 `JIANSHANAGENT_DRY_RUN=1`。
+## 修改线上配置
 
-全部仓库的目录在[组织主页](https://github.com/JianShanAgent)。
+- **日常热更新参数**：直接登录 Web 管理后台在网页上修改即可，改动保存在服务器数据盘上，重新发版不会被覆盖。
+- **随版本走的配置覆盖**：在 `config/` 下新建与默认配置同名的 YAML 文件，只写需要修改的字段（例如新建 `config/plugin.chat.yaml` 写 `entry_timeout_seconds: 45`），提交后执行 `./release deploy`。
 
-## 许可
+全部关联仓库见 [JianShanAgent 组织主页](https://github.com/JianShanAgent)。
 
-[MIT](LICENSE)
+## 开源许可
+
+[MIT License](LICENSE)

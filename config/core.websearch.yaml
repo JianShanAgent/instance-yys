@@ -1,0 +1,4 @@
+# 联网搜索：打开，用小米 MiMo 按量付费的那一份（强制联网）。只写和核心默认值不一样的项，
+# 各项的含义见核心仓库的 src/jianshanagent/defaults/core.websearch.yaml。
+# 密钥在 secrets.yaml 的 mimo_search.api_key；没填时查证照常，只是没有联网那一级。
+enabled: true

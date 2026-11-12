@@ -2,25 +2,27 @@
 
 <h1 align="center">instance-yys</h1>
 
-<p align="center"><a href="https://github.com/JianShanAgent/agent-core">JianShanAgent（见山）</a>服务于<a href="https://yys.huijiwiki.com">灰机阴阳师 Wiki</a> 的线上生产部署实例。</p>
+<p align="center"><a href="https://github.com/JianShanAgent/agent-core">JianShanAgent（见山）</a>服务于阴阳师的两个 Wiki（<a href="https://yys.huijiwiki.com">灰机阴阳师 Wiki</a>、<a href="https://wiki.biligame.com/yys">BWiki 阴阳师剧情百科</a>）的线上生产部署实例。</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/部署实例-阴阳师%20Wiki-2f6b5a?style=flat-square&labelColor=1f3b34" alt="部署实例：阴阳师 Wiki">
   <img src="https://img.shields.io/github/license/JianShanAgent/instance-yys?label=License&color=2f6b5a&style=flat-square&labelColor=1f3b34" alt="License">
 </p>
 
-<sub>Production deployment repository of JianShanAgent serving the Onmyoji Wiki (`yys.huijiwiki.com`).</sub>
+<sub>Production deployment repository of JianShanAgent serving two Onmyoji wikis (`yys.huijiwiki.com` and `wiki.biligame.com/yys`) with one bot.</sub>
 
 ## 这个仓库是什么
 
 见山采用“核心框架 + 站点插件 + 部署实例”分离的架构：
 - [`agent-core`](https://github.com/JianShanAgent/agent-core)：通用 MediaWiki QQ 机器人框架、Web 管理后台与部署工具；
 - [`site-huiji`](https://github.com/JianShanAgent/site-huiji)：灰机 Wiki 平台的 `Data:` 命名空间插件；
-- [`site-huiji-yys`](https://github.com/JianShanAgent/site-huiji-yys)：阴阳师 Wiki 的式神/御魂查询、公告剧情知识库与立绘图库插件。
+- [`site-huiji-yys`](https://github.com/JianShanAgent/site-huiji-yys)：灰机阴阳师 Wiki 的式神/御魂查询、公告剧情知识库与立绘图库插件；
+- [`site-bwiki`](https://github.com/JianShanAgent/site-bwiki)：BWiki 平台的语义查询接口、取数速率与公共清洗规则；
+- [`site-bwiki-yys`](https://github.com/JianShanAgent/site-bwiki-yys)：BWiki 阴阳师剧情百科的式神查询与清洗规则。
 
-本仓库（`instance-yys`）负责**把上面三个仓库组装成线上实际运行的阴阳师 QQ 机器人**。仓库里不包含业务代码，只存放三样东西：
-1. [`config/`](config)：阴阳师线上实例相对默认配置的差异项（目前只需一个 [`config/core.wiki.yaml`](config/core.wiki.yaml) 指明灰机接口地址并启用 `site: yys`）；
-2. [`components.lock`](components.lock)：锁定线上当前使用的 `agent-core`、`site-huiji`、`site-huiji-yys` 各自精确的 Git Commit；
+本仓库（`instance-yys`）负责**把上面五个仓库组装成线上实际运行的阴阳师 QQ 机器人**：同一个机器人挂着两个 Wiki，知识库各建各的、一起检索，`/查` 两边都查，回答里标明出处。仓库里不包含业务代码，只存放三样东西：
+1. [`config/`](config)：阴阳师线上实例相对默认配置的差异项（[`config/core.wiki.yaml`](config/core.wiki.yaml) 的 `wikis` 名单里写着两个 Wiki 的地址和各自的站点插件 `huiji_yys`、`bwiki_yys`；[`config/core.websearch.yaml`](config/core.websearch.yaml) 是联网搜索用哪家）；
+2. [`components.lock`](components.lock)：锁定线上当前使用的核心与四个站点插件各自精确的 Git Commit；
 3. [`docs/运维备忘.md`](docs/运维备忘.md)：线上知识库规模、服务器目录约定与外部服务说明。
 
 > **想给你自己的 Wiki 搭建机器人？**
@@ -28,13 +30,15 @@
 
 ## 本地开发联调
 
-开发机上将四个仓库并排放在同一个父目录下：
+开发机上将六个仓库并排放在同一个父目录下：
 
 ```text
 JianShanAgent/
 ├── agent-core/
 ├── site-huiji/
 ├── site-huiji-yys/
+├── site-bwiki/
+├── site-bwiki-yys/
 └── instance-yys/
 ```
 
@@ -44,14 +48,14 @@ JianShanAgent/
 # 首次运行复制凭据模板并填入密钥（secrets.yaml 不入库）
 cp config/secrets.example.yaml config/secrets.yaml
 
-# 安装同级目录下的核心与两个站点插件源码
+# 安装同级目录下的核心与四个站点插件源码
 uv sync
 
 # 不连接 QQ 网关在本地试跑（打开 http://127.0.0.1:18080 即可在网页后台对话调试，令牌见 data/admin/token）
 JIANSHANAGENT_DRY_RUN=1 uv run jianshanagent
 
-# 使用本地已拉取的缓存离线重跑知识库清洗切片（调规则时使用）
-uv run python -m jianshanagent.plugins.knowledge run --offline
+# 使用本地已拉取的缓存离线重跑知识库清洗切片（调规则时使用；--wiki 指定只做哪个 Wiki，不写就挨个做）
+uv run python -m jianshanagent.plugins.knowledge --wiki huiji run --offline
 ```
 
 > **注意**：线上服务器运行 `qqbot` 期间，开发机本地启动请务必加上 `JIANSHANAGENT_DRY_RUN=1`，避免同一个 QQ 机器人两处同时在线导致一条消息被重复回复。
@@ -61,7 +65,7 @@ uv run python -m jianshanagent.plugins.knowledge run --offline
 服务器 SSH 主机名配置在 [`release`](release) 脚本的 `SSH_HOST` 中（完整运维手册见 [`agent-core` 部署与运维](https://github.com/JianShanAgent/agent-core/blob/main/docs/部署与运维.md)）：
 
 ```bash
-# 1. 如果修改了旁边 agent-core / site-huiji / site-huiji-yys 的代码并已提交，先锁定最新 Commit：
+# 1. 如果修改了旁边核心或站点插件的代码并已提交，先锁定最新 Commit：
 ./release pin
 git commit -am "更新组件版本"
 

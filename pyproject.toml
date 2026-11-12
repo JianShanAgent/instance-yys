@@ -9,6 +9,8 @@ dependencies = [
   "jianshanagent",
   "jianshanagent-site-huiji",
   "jianshanagent-site-huiji-yys",
+  "jianshanagent-site-bwiki",
+  "jianshanagent-site-bwiki-yys",
 ]
 
 [tool.uv]
@@ -18,3 +20,5 @@ package = false
 jianshanagent = { path = "../agent-core", editable = true }
 jianshanagent-site-huiji = { path = "../site-huiji", editable = true }
 jianshanagent-site-huiji-yys = { path = "../site-huiji-yys", editable = true }
+jianshanagent-site-bwiki = { path = "../site-bwiki", editable = true }
+jianshanagent-site-bwiki-yys = { path = "../site-bwiki-yys", editable = true }

@@ -2,6 +2,8 @@
 # 发布号是本仓库提交的短号，所以改完这个文件要提交了再 `./release push`。第一行必须是核心。
 #
 # 名字           开发机上的目录（相对本仓库）   提交
-core             ../agent-core                e9f83b017058f5c22f347db8cb1cc0cd4d2ce57e
-site-huiji       ../site-huiji                515c35069c51726208b525233a3296f71e2c3460
-site-huiji-yys   ../site-huiji-yys            4879696b98e004fcf18db3291559d248eba27be5
+core             ../agent-core                67919f14cc52d63e4fef8374de168a1570f75483
+site-huiji       ../site-huiji                0dea92fcd599594851eb1cd0db984202208ed566
+site-huiji-yys   ../site-huiji-yys            df114c37d609fed9d7be4acef1fb94d6c9da9f16
+site-bwiki       ../site-bwiki                5daf8b214bfc416ddda267049c026ea3f05345e8
+site-bwiki-yys   ../site-bwiki-yys            028c0fa86fcbb663880092c351a142031159d016

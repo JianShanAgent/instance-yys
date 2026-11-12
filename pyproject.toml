@@ -7,9 +7,7 @@ description = "JianShanAgent 的一个部署：阴阳师 wiki 的 QQ 机器人"
 requires-python = ">=3.12"
 dependencies = [
   "jianshanagent",
-  "jianshanagent-site-huiji",
   "jianshanagent-site-huiji-yys",
-  "jianshanagent-site-bwiki",
   "jianshanagent-site-bwiki-yys",
 ]
 
@@ -18,7 +16,5 @@ package = false
 
 [tool.uv.sources]
 jianshanagent = { path = "../agent-core", editable = true }
-jianshanagent-site-huiji = { path = "../site-huiji", editable = true }
 jianshanagent-site-huiji-yys = { path = "../site-huiji-yys", editable = true }
-jianshanagent-site-bwiki = { path = "../site-bwiki", editable = true }
 jianshanagent-site-bwiki-yys = { path = "../site-bwiki-yys", editable = true }

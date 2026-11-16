@@ -13,7 +13,7 @@ wikis:
     label: "灰机 wiki"              # 回答里标出处用
     api_url: "https://yys.huijiwiki.com/api.php"
     # wiki 在 Cloudflare 后面，请求要带放行请求头才不会被挑战页拦截。
-    # 这里只写请求头名；密钥在 secrets.yaml 的 wiki.huiji.authkey（不入库）
+    # 这里只写请求头名。密钥在管理后台 Wiki 页的灰机平台里填；没填过时用 secrets.yaml 的 wiki.huiji.authkey
     auth_header: "X-authkey"
     # 站点插件：灰机上的阴阳师 wiki（jianshanagent-site-huiji-yys）；
     # 灰机平台的东西核心带着，会先加载

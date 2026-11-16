@@ -4,4 +4,4 @@
 # 名字           开发机上的目录（相对本仓库）   提交
 core             ../agent-core                4806a3c4aa7251b48f753ec681c4a65523377fa3
 site-huiji-yys   ../site-huiji-yys            9a1363aea31cb7153849402a11ae6e70f96dd2f8
-site-bwiki-yys   ../site-bwiki-yys            900fffaecc5b434dc0bc48342292e9c7df384656
+site-bwiki-yys   ../site-bwiki-yys            b4fe29031983f9399065e5411b8b4ed6474c0172

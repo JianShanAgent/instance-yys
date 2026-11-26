@@ -1,0 +1,5 @@
+# 固定文本预处理；同一模型的隐式默认指令在服务端存在差异。
+# 此字段计入文本向量指纹；图片链路仍使用原参数和原指纹。
+providers:
+  gitee:
+    text_instruction: "Represent the user's input."
